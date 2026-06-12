@@ -69,7 +69,7 @@ const handler = async (req, res) => {
 
     // Email to HC United
     await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: "info@hcunited.co.uk",
       to: ["info@hcunited.co.uk"],
       replyTo: email,
       subject: `Website Enquiry: ${subject}`,
