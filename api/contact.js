@@ -72,9 +72,9 @@ const handler = async (req, res) => {
       from: "HC United <info@hcunited.co.uk>",
       to: ["info@hcunited.co.uk"],
       replyTo: email,
-      subject: `Website Enquiry: ${subject}`,
+      subject: `Website form fill: ${subject}`,
       html: `
-        <h2>New Website Enquiry</h2>
+        <h2>New form fill on website</h2>
 
         <p><strong>Name:</strong> ${name}</p>
 
