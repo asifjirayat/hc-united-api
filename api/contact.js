@@ -69,7 +69,7 @@ const handler = async (req, res) => {
 
     // Email to HC United
     await resend.emails.send({
-      from: "info@hcunited.co.uk",
+      from: "HC United <info@hcunited.co.uk>",
       to: ["info@hcunited.co.uk"],
       replyTo: email,
       subject: `Website Enquiry: ${subject}`,
@@ -92,7 +92,7 @@ const handler = async (req, res) => {
 
     // Auto Reply
     await resend.emails.send({
-      from: "info@hcunited.co.uk",
+      from: "HC United <info@hcunited.co.uk>",
       to: [email],
       subject: "Thank you for contacting HC United",
       html: `
