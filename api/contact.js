@@ -2,28 +2,85 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
+export default handler = async (req, res) => {
+  // CORS
+  const allowedOrigins = [
+    "https://hcunited.co.uk",
+    "https://www.hcunited.co.uk",
+    "http://localhost:5173",
+  ];
+
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({
+      success: false,
       error: "Method not allowed",
     });
   }
 
   try {
-    const { name, email, phone, subject, message } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      subject,
+      message,
+      website, // Honeypot
+    } = req.body;
 
-    const result = await resend.emails.send({
+    // Honeypot spam protection
+    if (website) {
+      return res.status(200).json({
+        success: true,
+      });
+    }
+
+    // Validation
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields",
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid email address",
+      });
+    }
+
+    // Email to HC United
+    await resend.emails.send({
       from: "HC United <info@hcunited.co.uk>",
       to: ["info@hcunited.co.uk"],
       replyTo: email,
-      subject: `Website Enquiry: ${subject || "General Enquiry"}`,
+      subject: `Website Enquiry: ${subject}`,
       html: `
         <h2>New Website Enquiry</h2>
 
         <p><strong>Name:</strong> ${name}</p>
+
         <p><strong>Email:</strong> ${email}</p>
+
         <p><strong>Phone:</strong> ${phone || "-"}</p>
-        <p><strong>Subject:</strong> ${subject || "-"}</p>
+
+        <p><strong>Subject:</strong> ${subject}</p>
 
         <hr />
 
@@ -31,16 +88,35 @@ export default async function handler(req, res) {
       `,
     });
 
+    // Auto Reply
+    await resend.emails.send({
+      from: "HC United <info@hcunited.co.uk>",
+      to: [email],
+      subject: "Thank you for contacting HC United",
+      html: `
+        <h2>Thank you for contacting HC United</h2>
+
+        <p>
+          We have received your enquiry and a member
+          of our team will respond as soon as possible.
+        </p>
+
+        <p>
+          Kind Regards,<br />
+          HC United Limited
+        </p>
+      `,
+    });
+
     return res.status(200).json({
       success: true,
-      data: result,
     });
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: "Failed to send email",
     });
   }
-}
+};
