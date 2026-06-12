@@ -2,7 +2,9 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default handler = async (req, res) => {
+const handler = async (req, res) => {
+  console.log("API Key exists:", !!process.env.RESEND_API_KEY);
+
   // CORS
   const allowedOrigins = [
     "https://hcunited.co.uk",
@@ -67,7 +69,7 @@ export default handler = async (req, res) => {
 
     // Email to HC United
     await resend.emails.send({
-      from: "HC United <info@hcunited.co.uk>",
+      from: "onboarding@resend.dev",
       to: ["info@hcunited.co.uk"],
       replyTo: email,
       subject: `Website Enquiry: ${subject}`,
@@ -89,24 +91,24 @@ export default handler = async (req, res) => {
     });
 
     // Auto Reply
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: [email],
-      subject: "Thank you for contacting HC United",
-      html: `
-        <h2>Thank you for contacting HC United</h2>
+    // await resend.emails.send({
+    //   from: "onboarding@resend.dev",
+    //   to: [email],
+    //   subject: "Thank you for contacting HC United",
+    //   html: `
+    //     <h2>Thank you for contacting HC United</h2>
 
-        <p>
-          We have received your enquiry and a member
-          of our team will respond as soon as possible.
-        </p>
+    //     <p>
+    //       We have received your enquiry and a member
+    //       of our team will respond as soon as possible.
+    //     </p>
 
-        <p>
-          Kind Regards,<br />
-          HC United Limited
-        </p>
-      `,
-    });
+    //     <p>
+    //       Kind Regards,<br />
+    //       HC United Limited
+    //     </p>
+    //   `,
+    // });
 
     return res.status(200).json({
       success: true,
@@ -116,9 +118,9 @@ export default handler = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      error: "Failed to send email",
+      error: error.message,
     });
   }
 };
 
-console.log("API Key exists:", !!process.env.RESEND_API_KEY);
+export default handler;
