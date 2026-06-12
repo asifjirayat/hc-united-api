@@ -90,7 +90,7 @@ export default handler = async (req, res) => {
 
     // Auto Reply
     await resend.emails.send({
-      from: "HC United <info@hcunited.co.uk>",
+      from: "onboarding@resend.dev",
       to: [email],
       subject: "Thank you for contacting HC United",
       html: `
@@ -120,3 +120,5 @@ export default handler = async (req, res) => {
     });
   }
 };
+
+console.log("API Key exists:", !!process.env.RESEND_API_KEY);
