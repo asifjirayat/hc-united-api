@@ -91,24 +91,24 @@ const handler = async (req, res) => {
     });
 
     // Auto Reply
-    // await resend.emails.send({
-    //   from: "onboarding@resend.dev",
-    //   to: [email],
-    //   subject: "Thank you for contacting HC United",
-    //   html: `
-    //     <h2>Thank you for contacting HC United</h2>
+    await resend.emails.send({
+      from: "info@hcunited.co.uk",
+      to: [email],
+      subject: "Thank you for contacting HC United",
+      html: `
+        <h2>Thank you for contacting HC United</h2>
 
-    //     <p>
-    //       We have received your enquiry and a member
-    //       of our team will respond as soon as possible.
-    //     </p>
+        <p>
+          We have received your enquiry and a member
+          of our team will respond as soon as possible.
+        </p>
 
-    //     <p>
-    //       Kind Regards,<br />
-    //       HC United Limited
-    //     </p>
-    //   `,
-    // });
+        <p>
+          Kind Regards,<br />
+          HC United Limited
+        </p>
+      `,
+    });
 
     return res.status(200).json({
       success: true,
